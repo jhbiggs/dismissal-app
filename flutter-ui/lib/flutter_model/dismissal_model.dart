@@ -9,10 +9,8 @@ class DismissalModel extends ChangeNotifier {
   List<Teacher> _teachers;
 
   DismissalModel(this._buses, this._teachers) {
-
     // get the buses and teachers from the database
     print("initiating dismissal model");
-    
   }
 
   List<Bus> get buses => _buses;
@@ -20,19 +18,19 @@ class DismissalModel extends ChangeNotifier {
 
   void resetArrivalFields() async {
     print('Resetting arrival fields');
-      for (var teacher in teachers) {
-        if (teacher.arrived) {
-          await updateTeacher(teacher);
-        }
+    for (var teacher in teachers) {
+      if (teacher.arrived) {
+        await updateTeacher(teacher);
       }
-    
-      for (var bus in buses) {
-        if (bus.arrived) {
-          await updateBus(bus);
-        }
+    }
+
+    for (var bus in buses) {
+      if (bus.arrived) {
+        await updateBus(bus);
       }
-      // wait a second for the processes to complete
-      // await Future.delayed(const Duration(seconds: 1));
+    }
+    // wait a second for the processes to complete
+    // await Future.delayed(const Duration(seconds: 1));
     // get the buses and teachers from the database
     _teachers = await fetchTeachers();
     _buses = await fetchBuses();
@@ -42,5 +40,15 @@ class DismissalModel extends ChangeNotifier {
 
   static of(BuildContext context) {
     return Provider.of<DismissalModel>(context, listen: false);
+  }
+
+  void addNewData(List<Teacher> newTeachers, List<Bus> newBuses) async {
+    // Update the model with the new data
+    _teachers = newTeachers;
+    _buses = newBuses;
+
+    // Add new teachers to the database
+
+    notifyListeners();
   }
 }

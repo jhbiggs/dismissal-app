@@ -58,8 +58,7 @@ Future<List<Teacher>> fetchTeachers() async {
 Future<http.Response> updateBus(Bus bus) async {
   // print("Bus ID in updateBus is: ${bus.id}");
   final response = await http.put(
-    Uri.parse(
-      'http://$baseUrl/buses/${bus.id}/toggleBusArrivalStatus'),
+    Uri.parse('http://$baseUrl/buses/${bus.id}/toggleBusArrivalStatus'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -97,5 +96,24 @@ Future<http.Response> updateTeacher(Teacher teacher) async {
     // then throw an exception.
     throw Exception(
         'Failed to update teacher, error code: ${response.statusCode}');
+  }
+}
+
+Future<http.Response> addListOfTeachers(List<Teacher> teachers) async {
+  final response =
+      await http.post(Uri.parse('http://$baseUrl/addListofTeachers'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, List<Teacher>>{'teachers': teachers}));
+  if (response.statusCode == 200) {
+    // If the server returns a 200 OK response,
+    // then parse the JSON.
+    return response;
+  } else {
+    // If the server returns an error response,
+    // then throw an exception.
+    throw Exception(
+        'Failed to add teacher list, error code: ${response.statusCode}');
   }
 }

@@ -69,3 +69,10 @@ func UpdateTeacher(teacher *go_objects.Teacher) {
 		fmt.Println("Error updating the teachers table: ", err)
 	}
 }
+
+func AddTeacherList(teacherList []go_objects.Teacher) {
+	fmt.Println("AddTeacherList called")
+	for _, teacher := range teacherList {
+		AddTeacher(&teacher)
+	}
+}

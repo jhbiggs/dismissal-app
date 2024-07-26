@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bus/flutter_views/launch_view.dart';
 import 'package:flutter_bus/flutter_settings/settings_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../flutter_settings/settings_controller.dart';
 
@@ -8,15 +9,36 @@ import '../flutter_settings/settings_controller.dart';
 ///
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
-class SettingsView extends StatelessWidget {
-  const SettingsView({Key? key, required this.controller}) : super(key: key);
+class SettingsView extends StatefulWidget {
+   const SettingsView({Key? key, required this.controller}) : super(key: key);
 
   static const routeName = '/settings';
 
   final SettingsController controller;
 
+    @override
+  State<StatefulWidget> createState() => _SettingsViewState(controller);
+}
+
+class _SettingsViewState extends State<SettingsView> {
+  _SettingsViewState(this.controller);
+  SettingsController controller;
+  late SharedPreferences prefs;
+
+    void _getSharedPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getSharedPrefs();
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -41,8 +63,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 );
               },
-            )
-            ),
+            )),
         Padding(
           padding: const EdgeInsets.all(16),
           // Glue the SettingsController to the theme selection DropdownButton.
@@ -70,7 +91,16 @@ class SettingsView extends StatelessWidget {
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListTile(
+            title: Text(prefs.getString('accountCode') ??
+                'Account Code will Appear Here'),
+          ),
+        ),
       ]),
     );
   }
+  
+
 }
