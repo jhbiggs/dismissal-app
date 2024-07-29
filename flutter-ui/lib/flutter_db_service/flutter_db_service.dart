@@ -7,18 +7,18 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // const String baseUrl = 'http://ec2-52-201-69-55.compute-1.amazonaws.com:443';
-// const String baseUrl = 'dismissalapp.org';
-const String baseUrl = 'localhost';
-// const String baseUrl = '192.168.1.14';
+const String baseUrl = 'dismissalapp.org';
+// const String baseUrl = 'localhost';
+// const String baseUrl = '10.44.0.48';
 String accountCode = 'dismissal_schema';
 
-void GetAccountCode() async {
+void getAccountCode() async {
   accountCode = await SharedPreferences.getInstance()
       .then((prefs) => prefs.getString('accountCode') ?? 'dismissal_schema');
 }
 
 Future<List<Bus>> fetchBuses() async {
-  final response = await http.get(Uri.parse('http://$baseUrl/buses'));
+  final response = await http.get(Uri.parse('https://$baseUrl/buses'));
 
   if (response.statusCode == 200) {
     // If the server returns a 200 OK response,
@@ -86,7 +86,7 @@ Future<http.Response> updateBus(Bus bus) async {
 
 Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
   // print("Teacher ID in updateTeacher is: ${teacher.name}\n and id is: ${teacher.id}");
-  GetAccountCode();
+  getAccountCode();
   final response = await http.put(
     Uri.parse(
         'http://$baseUrl/$accountCode/teachers/${teacher.id}/toggleTeacherArrivalStatus'),

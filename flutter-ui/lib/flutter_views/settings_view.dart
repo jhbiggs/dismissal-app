@@ -47,16 +47,9 @@ class _SettingsViewState extends State<SettingsView> {
             child: ElevatedButton(
               child: const Text("Return to Launch Screen"),
               onPressed: () async {
-                final settingsController =
-                    SettingsController(SettingsService());
-                // Load the user's preferred theme while the splash screen is displayed.
-                // This prevents a sudden theme change when the app is first displayed.
-                await settingsController.loadSettings();
+
                 // Load the buses and teachers from the JSON files
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => const OnBoardingPage(),
-                  ),
+                Navigator.pushNamed(context, OnBoardingPage.routeName
                 );
               },
             )),

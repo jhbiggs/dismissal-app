@@ -254,7 +254,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                               //launch the app
                               Navigator.pushNamed(context, MainView.routeName);
                             },
-                            child: const Text('Save All'),
+                            child: const Text('Save All and Go'),
                           )
                         ],
                       ),
