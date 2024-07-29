@@ -1,13 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter_bus/flutter_objects/bus.dart';
+import 'package:flutter_bus/flutter_objects/buses_and_teachers.dart';
 import 'package:flutter_bus/flutter_objects/teacher.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // const String baseUrl = 'http://ec2-52-201-69-55.compute-1.amazonaws.com:443';
 // const String baseUrl = 'dismissalapp.org';
 const String baseUrl = 'localhost';
 // const String baseUrl = '192.168.1.14';
+String accountCode = 'dismissal_schema';
+
+void GetAccountCode() async {
+  accountCode = await SharedPreferences.getInstance()
+      .then((prefs) => prefs.getString('accountCode') ?? 'dismissal_schema');
+}
 
 Future<List<Bus>> fetchBuses() async {
   final response = await http.get(Uri.parse('http://$baseUrl/buses'));
@@ -76,11 +84,12 @@ Future<http.Response> updateBus(Bus bus) async {
   }
 }
 
-Future<http.Response> updateTeacher(Teacher teacher) async {
+Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
   // print("Teacher ID in updateTeacher is: ${teacher.name}\n and id is: ${teacher.id}");
+  GetAccountCode();
   final response = await http.put(
     Uri.parse(
-        'http://$baseUrl/teachers/${teacher.id}/toggleTeacherArrivalStatus'),
+        'http://$baseUrl/$accountCode/teachers/${teacher.id}/toggleTeacherArrivalStatus'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -99,13 +108,16 @@ Future<http.Response> updateTeacher(Teacher teacher) async {
   }
 }
 
-Future<http.Response> addListOfTeachers(List<Teacher> teachers) async {
-  final response =
-      await http.post(Uri.parse('http://$baseUrl/addListofTeachers'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, List<Teacher>>{'teachers': teachers}));
+Future<http.Response> sendListOfTeachers(
+    BusesAndTeachers busesAndTeachers) async {
+  final response = await http.put(
+      Uri.parse('http://$baseUrl/addListofTeachers'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+          <String, BusesAndTeachers>{'buses-and-teachers': busesAndTeachers}));
+
   if (response.statusCode == 200) {
     // If the server returns a 200 OK response,
     // then parse the JSON.

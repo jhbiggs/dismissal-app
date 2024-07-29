@@ -10,6 +10,9 @@ import (
 	// "sync"
 )
 
+// Perform the functions from the launch screen including
+// creating a new account and receiving buses and teachers.
+
 func InitiateNewAccount(ctx *gin.Context)  {
 	fmt.Println("InitiateNewAccount called")
 
@@ -43,4 +46,11 @@ func InitiateNewAccount(ctx *gin.Context)  {
 
 
 	return 
+}
+
+func ReceiveBusesAndTeachers(ctx *gin.Context) {
+	fmt.Println("receiveBusesAndTeachers called")
+	// ctx.
+
+
 }

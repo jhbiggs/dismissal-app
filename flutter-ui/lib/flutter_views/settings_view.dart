@@ -17,29 +17,27 @@ class SettingsView extends StatefulWidget {
   final SettingsController controller;
 
     @override
-  State<StatefulWidget> createState() => _SettingsViewState(controller);
+  State<StatefulWidget> createState() => _SettingsViewState();
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  _SettingsViewState(this.controller);
-  SettingsController controller;
-  late SharedPreferences prefs;
-
-    void _getSharedPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-  }
+  SharedPreferences? prefs;
 
   @override
   void initState() {
     super.initState();
-
-    _getSharedPrefs();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        prefs = prefs;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('Settings'),
       ),
@@ -57,9 +55,7 @@ class _SettingsViewState extends State<SettingsView> {
                 // Load the buses and teachers from the JSON files
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => OnBoardingPage(
-                      settingsController: settingsController,
-                    ),
+                    builder: (_) => const OnBoardingPage(),
                   ),
                 );
               },
@@ -72,9 +68,9 @@ class _SettingsViewState extends State<SettingsView> {
           // SettingsController is updated, which rebuilds the MaterialApp.
           child: DropdownButton<ThemeMode>(
             // Read the selected themeMode from the controller
-            value: controller.themeMode,
+            value: widget.controller.themeMode,
             // Call the updateThemeMode method any time the user selects a theme.
-            onChanged: controller.updateThemeMode,
+            onChanged: widget.controller.updateThemeMode,
             items: const [
               DropdownMenuItem(
                 value: ThemeMode.system,
@@ -94,7 +90,7 @@ class _SettingsViewState extends State<SettingsView> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: ListTile(
-            title: Text(prefs.getString('accountCode') ??
+            title: Text(prefs?.getString('accountCode') ??
                 'Account Code will Appear Here'),
           ),
         ),

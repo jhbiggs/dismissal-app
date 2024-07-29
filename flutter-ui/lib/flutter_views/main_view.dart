@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bus/flutter_settings/settings_controller.dart';
 import 'package:flutter_bus/flutter_views/bus_list_view.dart';
 import 'package:flutter_bus/flutter_views/teacher_list_view.dart';
 import 'package:flutter_bus/flutter_model/dismissal_model.dart';
@@ -6,9 +7,10 @@ import 'package:flutter_bus/flutter_model/dismissal_model.dart';
 import 'settings_view.dart';
 
 class MainView extends StatefulWidget {
-  static const routeName = '/';
+  static const routeName = '/main_view';
+  final SettingsController settingsController;
 
-  const MainView({super.key});
+  const MainView({super.key, required  this.settingsController});
 
   @override
   State<MainView> createState() => _MainViewState();
@@ -60,7 +62,7 @@ class _MainViewState extends State<MainView> {
               // Navigate to the settings page. If the user leaves and returns
               // to the app after it has been killed while running in the
               // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
+              Navigator.of(context).pushNamed(SettingsView.routeName);
             },
           ),
           IconButton(

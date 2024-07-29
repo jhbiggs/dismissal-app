@@ -48,7 +48,8 @@ func GetTeachers(ctx *gin.Context) {
 
 func ToggleTeacherArrivalStatus(ctx *gin.Context){
 	teacherID := ctx.Param("teacher_id")
-	fmt.Println("ToggleTeacherArrivalStatus called with teacherID: ", teacherID)
+	fmt.Println("ToggleTeacherArrivalStatus called with teacherID: $1", teacherID)
+	// accountCode := ctx.Param("account_code")
 
 	result, err := DB.Exec("UPDATE dismissal_schema.teachers SET arrived = NOT arrived WHERE teacherid = $1", teacherID)
 	fmt.Println("Result is: ", result)
@@ -67,12 +68,5 @@ func UpdateTeacher(teacher *go_objects.Teacher) {
 	fmt.Println("result in updateTeacher is: ", result)
 	if err != nil {
 		fmt.Println("Error updating the teachers table: ", err)
-	}
-}
-
-func AddTeacherList(teacherList []go_objects.Teacher) {
-	fmt.Println("AddTeacherList called")
-	for _, teacher := range teacherList {
-		AddTeacher(&teacher)
 	}
 }

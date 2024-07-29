@@ -1,2 +1,17 @@
 /.DS_Store
 /.idea
+flutter-ui/build/unit_test_assets/assets/ca/server.key
+flutter-ui/build/unit_test_assets/assets/ca/server.crt
+flutter-ui/build/unit_test_assets/assets/ca/mycert.pem
+flutter-ui/build/unit_test_assets/shaders/ink_sparkle.frag
+flutter-ui/build/unit_test_assets/fonts/MaterialIcons-Regular.otf
+flutter-ui/build/unit_test_assets/NOTICES.Z
+flutter-ui/build/unit_test_assets/FontManifest.json
+flutter-ui/build/unit_test_assets/AssetManifest.json
+flutter-ui/build/unit_test_assets/AssetManifest.bin
+flutter-ui/build/test_cache/build/cache.dill.track.dill
+flutter-ui/build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/flutter_assets/NOTICES.Z
+flutter-ui/pubspec.lock
+flutter-ui/.dart_tool/flutter_build/22af8fecc7064425caf0208fe059b1d4/kernel_snapshot.d
+flutter-ui/.dart_tool/flutter_build/22af8fecc7064425caf0208fe059b1d4/flutter_assets.d
+flutter-ui/.flutter-plugins-dependencies

@@ -2,29 +2,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bus/flutter_views/form_views/initial_entry_view.dart';
 import 'package:flutter_bus/flutter_settings/settings_controller.dart';
+import 'package:flutter_bus/flutter_views/info_entry_form.dart';
+import 'package:flutter_bus/flutter_views/main_view.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 class OnBoardingPage extends StatefulWidget {
     static const routeName = '/onboarding_view';
 
-  const OnBoardingPage({super.key, required this.settingsController});
-  final SettingsController settingsController;
+  const OnBoardingPage({super.key});
 
   @override
   OnBoardingPageState createState() =>
-      OnBoardingPageState(settingsController: settingsController);
+      OnBoardingPageState();
 }
 
 class OnBoardingPageState extends State<OnBoardingPage> {
-  OnBoardingPageState({required this.settingsController});
-  final SettingsController settingsController;
+  OnBoardingPageState();
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (_) => const InitialEntryView()),
-    );
+    // push the main view route
+    Navigator.pushNamed(context, InfoEntryForm.routeName);
+ 
   }
 
   Widget _buildFullscreenImage() {
@@ -155,39 +154,6 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         // color: Theme.of(context).,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.settingsController});
-  final SettingsController settingsController;
-
-  void _onBackToIntro(context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (_) =>
-              OnBoardingPage(settingsController: settingsController)),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("This is the screen after Introduction"),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => _onBackToIntro(context),
-              child: const Text('Back to Introduction'),
-            ),
-          ],
         ),
       ),
     );

@@ -20,7 +20,7 @@ class DismissalModel extends ChangeNotifier {
     print('Resetting arrival fields');
     for (var teacher in teachers) {
       if (teacher.arrived) {
-        await updateTeacher(teacher);
+        await toggleTeacherArrivalStatus(teacher);
       }
     }
 
