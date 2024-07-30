@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_db_service/flutter_db_service.dart';
-import 'package:flutter_bus/flutter_objects/teacher.dart';
-import 'package:flutter_bus/flutter_objects/bus.dart';
+import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
+import 'package:flutter_ui/flutter_objects/teacher.dart';
+import 'package:flutter_ui/flutter_objects/bus.dart';
 import 'package:provider/provider.dart';
 
 class DismissalModel extends ChangeNotifier {

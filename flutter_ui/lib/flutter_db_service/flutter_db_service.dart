@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter_bus/flutter_objects/bus.dart';
-import 'package:flutter_bus/flutter_objects/buses_and_teachers.dart';
-import 'package:flutter_bus/flutter_objects/teacher.dart';
+import 'package:flutter_ui/flutter_objects/bus.dart';
+import 'package:flutter_ui/flutter_objects/buses_and_teachers.dart';
+import 'package:flutter_ui/flutter_objects/teacher.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_model/dismissal_model.dart';
-import 'package:flutter_bus/flutter_objects/bus.dart';
-import 'package:flutter_bus/flutter_objects/event.dart';
-import 'package:flutter_bus/flutter_views/emoji_translator.dart';
-import 'package:flutter_bus/flutter_db_service/flutter_db_service.dart';
+import 'package:flutter_ui/flutter_model/dismissal_model.dart';
+import 'package:flutter_ui/flutter_objects/bus.dart';
+import 'package:flutter_ui/flutter_objects/event.dart';
+import 'package:flutter_ui/flutter_views/emoji_translator.dart';
+import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

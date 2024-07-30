@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_db_service/flutter_db_service.dart';
-import 'package:flutter_bus/flutter_settings/settings_controller.dart';
-import 'package:flutter_bus/flutter_views/bus_list_view.dart';
-import 'package:flutter_bus/flutter_views/teacher_list_view.dart';
-import 'package:flutter_bus/flutter_model/dismissal_model.dart';
+import 'package:flutter_ui/flutter_settings/settings_controller.dart';
+import 'package:flutter_ui/flutter_views/bus_list_view.dart';
+import 'package:flutter_ui/flutter_views/teacher_list_view.dart';
+import 'package:flutter_ui/flutter_model/dismissal_model.dart';
 
 import 'settings_view.dart';
 
@@ -11,7 +10,7 @@ class MainView extends StatefulWidget {
   static const routeName = '/main_view';
   final SettingsController settingsController;
 
-  const MainView({super.key, required  this.settingsController});
+  const MainView({super.key, required this.settingsController});
 
   @override
   State<MainView> createState() => _MainViewState();

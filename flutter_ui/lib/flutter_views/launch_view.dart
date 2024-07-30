@@ -1,19 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_views/form_views/initial_entry_view.dart';
-import 'package:flutter_bus/flutter_settings/settings_controller.dart';
-import 'package:flutter_bus/flutter_views/info_entry_form.dart';
-import 'package:flutter_bus/flutter_views/main_view.dart';
+import 'package:flutter_ui/flutter_views/info_entry_form.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 class OnBoardingPage extends StatefulWidget {
-    static const routeName = '/onboarding_view';
+  static const routeName = '/onboarding_view';
 
   const OnBoardingPage({super.key});
 
   @override
-  OnBoardingPageState createState() =>
-      OnBoardingPageState();
+  OnBoardingPageState createState() => OnBoardingPageState();
 }
 
 class OnBoardingPageState extends State<OnBoardingPage> {
@@ -23,7 +19,6 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   void _onIntroEnd(context) {
     // push the main view route
     Navigator.pushNamed(context, InfoEntryForm.routeName);
- 
   }
 
   Widget _buildFullscreenImage() {
@@ -38,7 +33,8 @@ class OnBoardingPageState extends State<OnBoardingPage> {
 
   Widget _buildImage(String assetName, [double width = 350]) {
     try {
-      return Image.asset('assets/images/flutter_logo.png'); //Image.asset('assets/$assetName', width: width);
+      return Image.asset(
+          'assets/images/flutter_logo.png'); //Image.asset('assets/$assetName', width: width);
     } catch (e) {
       // print("An error was found, sorry pal.");
       return const Text("no");
@@ -50,7 +46,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   @override
   Widget build(BuildContext context) {
     const bodyStyle = TextStyle(fontSize: 19.0);
-  print("OnBoardingPageState");
+    print("OnBoardingPageState");
 
     const pageDecoration = PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
@@ -89,8 +85,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       pages: [
         PageViewModel(
           title: "Welcome to the Dismissal App",
-          body:
-              "Keep track.  No turnarounds. \n\nClick 'Next' to learn more.",
+          body: "Keep track.  No turnarounds. \n\nClick 'Next' to learn more.",
           // image: _buildImage('.jpg'),
           decoration: pageDecoration.copyWith(
             contentMargin: const EdgeInsets.symmetric(horizontal: 16),
@@ -102,7 +97,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         ),
         PageViewModel(
           title: "Enter the Information",
-          body: 
+          body:
               "Enter teacher names, bus number and select the animal that corresponds to the bus.",
           // image: _buildImage('img2.jpg'),
           decoration: pageDecoration.copyWith(
@@ -116,7 +111,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
         PageViewModel(
           title: "Let's Get Started",
           body:
-            "Once you have entered the bus and teacher information, you can start tracking the dismissal process.",
+              "Once you have entered the bus and teacher information, you can start tracking the dismissal process.",
           image: _buildFullscreenImage(),
           decoration: pageDecoration.copyWith(
             contentMargin: const EdgeInsets.symmetric(horizontal: 16),

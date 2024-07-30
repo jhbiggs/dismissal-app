@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bus/flutter_views/bus_list_view.dart';
-import 'package:flutter_bus/flutter_views/info_entry_form.dart';
-import 'package:flutter_bus/flutter_views/main_view.dart';
-import 'package:flutter_bus/flutter_views/settings_view.dart';
-import 'package:flutter_bus/flutter_views/teacher_list_view.dart';
+import 'package:flutter_ui/flutter_views/settings_view.dart';
+import 'package:flutter_ui/flutter_views/bus_list_view.dart';
+import 'package:flutter_ui/flutter_views/info_entry_form.dart';
+import 'package:flutter_ui/flutter_views/main_view.dart';
+import 'package:flutter_ui/flutter_views/teacher_list_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_db_service/flutter_db_service.dart';
 import 'flutter_model/dismissal_model.dart';
 import 'flutter_settings/settings_controller.dart';
@@ -39,7 +38,7 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-   App({super.key, required this.settingsController});
+  App({super.key, required this.settingsController});
   final SettingsController settingsController;
 
   @override
@@ -54,8 +53,7 @@ class App extends StatelessWidget {
         title: 'Introduction screen',
         debugShowCheckedModeBanner: false,
         theme: Theme.of(context),
-        initialRoute:
-            true ? OnBoardingPage.routeName : MainView.routeName,
+        initialRoute: true ? OnBoardingPage.routeName : MainView.routeName,
         onGenerateRoute: (RouteSettings routeSettings) {
           return MaterialPageRoute<void>(
               settings: routeSettings,

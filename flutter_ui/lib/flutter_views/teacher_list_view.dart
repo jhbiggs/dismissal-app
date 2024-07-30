@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_db_service/flutter_db_service.dart';
-import 'package:flutter_bus/flutter_model/dismissal_model.dart';
-import 'package:flutter_bus/flutter_objects/event.dart';
+import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
+import 'package:flutter_ui/flutter_model/dismissal_model.dart';
+import 'package:flutter_ui/flutter_objects/event.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -74,9 +74,7 @@ class _TeacherListViewState extends State<TeacherListView> {
       }
       return Consumer<DismissalModel>(
           builder: (context, model, child) =>
-              ListView(
-                padding: const EdgeInsets.all(16), 
-                children: [
+              ListView(padding: const EdgeInsets.all(16), children: [
                 for (var index = 0; index < model.teachers.length; index++) ...[
                   ListTile(
                     title: Text('Teacher ${model.teachers[index].name}'),

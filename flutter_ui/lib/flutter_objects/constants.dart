@@ -1,6 +1,6 @@
-import 'package:flutter_bus/flutter_objects/teacher.dart';
+import 'package:flutter_ui/flutter_objects/teacher.dart';
 import 'bus.dart';
-import 'package:flutter_bus/flutter_db_service/flutter_db_service.dart';
+import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
 
 Future<List<Teacher>> teachers = fetchTeachers();
 

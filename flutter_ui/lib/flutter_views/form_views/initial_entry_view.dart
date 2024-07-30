@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bus/flutter_views/form_views/code_page.dart';
-import 'package:flutter_bus/flutter_views/info_entry_form.dart';
+import 'package:flutter_ui/flutter_views/form_views/code_page.dart';
+import 'package:flutter_ui/flutter_views/info_entry_form.dart';
 
 class InitialEntryView extends StatefulWidget {
   const InitialEntryView({super.key});

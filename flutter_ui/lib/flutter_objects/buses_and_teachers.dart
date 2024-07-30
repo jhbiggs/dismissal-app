@@ -1,5 +1,5 @@
-import 'package:flutter_bus/flutter_objects/bus.dart';
-import 'package:flutter_bus/flutter_objects/teacher.dart';
+import 'package:flutter_ui/flutter_objects/bus.dart';
+import 'package:flutter_ui/flutter_objects/teacher.dart';
 
 class BusesAndTeachers {
   List<Bus> buses;
