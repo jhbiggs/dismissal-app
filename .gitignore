@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+
 .DS_Store
 .atom/
 .buildlog/
@@ -22,22 +23,22 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+flutter_ui/**/doc/api/
+flutter_ui/**/ios/Flutter/.last_build_id
+flutter_ui/.dart_tool/
+flutter_ui/.flutter-plugins
+flutter_ui/.flutter-plugins-dependencies
+flutter_ui/.pub-cache/
+flutter_ui/.pub/
+flutter_ui/build/
 
 # Symbolication related
-app.*.symbols
+flutter_ui/app.*.symbols
 
 # Obfuscation related
-app.*.map.json
+flutter_ui/app.*.map.json
 
 # Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+flutter_ui/android/app/debug
+flutter_ui/android/app/profile
+flutter_ui/android/app/release

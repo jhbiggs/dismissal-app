@@ -21,15 +21,18 @@ var (
 
 func GetBuses(ctx *gin.Context) {
 	fmt.Println("GetBuses called")
+	schemaId := ctx.Param("account_code")
+	fmt.Println("schemaId: ", schemaId)
+
 
 	busList := []go_objects.Bus{}
 	// query the database and return rows into the rows variable.
 	// Query returns a rows object and an error object.
 	// Go doesn't care what the SQL column names are.
 	// It just takes the data from the column and puts them into the fields you specify.
-	dbInstance := GetDB()
-	rows, err := dbInstance.Query("SELECT * FROM dismissal_schema.buses")
-	// print each row in rows
+	db := GetDB()
+	// artist := "1"
+	rows, err := db.Query("SELECT * FROM "+schemaId+ ".buses")	// print each row in rows
 	if err != nil {
 		fmt.Println("Error querying the database: ", err)
 		return
@@ -82,17 +85,19 @@ func GetBuses(ctx *gin.Context) {
 
 func ToggleBusArrivalStatus(ctx *gin.Context) {
 	fmt.Println("ToggleBusArrivalSTatus called")
+	schemaId := ctx.Param("account_code")
 
 	busid := ctx.Param("id")
-	_, err := DB.Exec("UPDATE dismissal_schema.buses SET arrived = NOT arrived WHERE busid = $1", busid)
+	_, err := DB.Exec("UPDATE " + schemaId + ".buses SET arrived = NOT arrived WHERE busid = $1", busid)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func UpdateBus (bus *go_objects.Bus){
-	_, err := DB.Exec("UPDATE dismissal_schema.buses SET arrived = $1 WHERE busid = $2", bus.Arrived, bus.BusID)
+func UpdateBus (bus *go_objects.Bus, schemaId string) {
+	// get the schema from the current database
+	_, err := DB.Exec("UPDATE "+schemaId+".buses SET arrived = $1 WHERE busid = $2", bus.Arrived, bus.BusID)
 	if err != nil {
 		fmt.Println("Error updating the buses table: ", err)
 	}

@@ -6,8 +6,10 @@ import (
 	"math/rand"
 	"time"
 	"net/http"
-	// "github.com/lib/pq"
-	// "sync"
+	"io/ioutil"
+	"log"
+	"dismissal.com/m/v2/go_objects"
+
 )
 
 // Perform the functions from the launch screen including
@@ -32,6 +34,12 @@ func InitiateNewAccount(ctx *gin.Context)  {
 	// set up Postgres schema for new account
 	accountCodeStr := string(accountCode)
 	_, err := GetDB().Exec(fmt.Sprintf("CREATE SCHEMA %s", accountCodeStr))
+	_, err = GetDB().Exec(fmt.Sprintf("SET search_path TO %s", accountCodeStr))
+	triggerSetupInstructions, err := ioutil.ReadFile("sql_files/trigger.sql")
+	_, err = GetDB().Exec(string(triggerSetupInstructions))
+	databaseSetupInstructions, err := ioutil.ReadFile("sql_files/dismissalStructureModifyPG.sql")
+	_, err = GetDB().Exec(string(databaseSetupInstructions))
+
 	if err != nil {
 		fmt.Println("Error updating the database: ", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -48,9 +56,17 @@ func InitiateNewAccount(ctx *gin.Context)  {
 	return 
 }
 
-func ReceiveBusesAndTeachers(ctx *gin.Context) {
+func UpdateBusesAndTeachers(ctx *gin.Context) {
 	fmt.Println("receiveBusesAndTeachers called")
-	// ctx.
+	
+
+
+	var newSet go_objects.BusesAndTeachers
+	if err := ctx.BindJSON(&newSet); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("newSet: ", newSet)
 
 
 }

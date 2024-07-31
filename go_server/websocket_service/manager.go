@@ -108,7 +108,7 @@ func (m *Manager) setupEventHandlers() {
 			client.egress <- outgoing
 		}
 
-		database_service.UpdateBus(bus)
+		database_service.UpdateBus(bus, c.schemaId)
 
 		return nil
 	}
@@ -130,7 +130,8 @@ func (m *Manager) routeEvent(event Event, c *Client) error {
 
 // Allows connections.  Gin Router calls it in API and server.go.
 func (m *Manager) ServeWS(ctx *gin.Context) {
-
+	
+	schemaId := ctx.Param("account_code")
 	log.Println("New connection")
 	// Step one: upgrade HTTP request
 	conn, err := websocketUpgrader.Upgrade(ctx.Writer, ctx.Request, nil)
@@ -140,7 +141,7 @@ func (m *Manager) ServeWS(ctx *gin.Context) {
 	}
 
 	// Create new client
-	client := NewClient(conn, m)
+	client := NewClient(conn, m, schemaId)
 	// Add the newly created client to the manager
 	m.addClient(client)
 

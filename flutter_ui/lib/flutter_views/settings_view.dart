@@ -22,14 +22,25 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   SharedPreferences? prefs;
 
+  void _loadPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {});
+  }
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {
-      setState(() {
-        prefs = prefs;
-      });
-    });
+    _loadPrefs();
+  }
+
+  _getAccountCode() {
+    if (prefs == null) {
+      return const Text('Loading...');
+    }
+    final accountCode = prefs!.getString('accountCode');
+    if (accountCode == null) {
+      return const Text('No account code set');
+    }
+    return Text('Account Code: $accountCode');
   }
 
   @override
@@ -82,8 +93,9 @@ class _SettingsViewState extends State<SettingsView> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: ListTile(
-            title: Text(prefs?.getString('accountCode') ??
-                'Account Code will Appear Here'),
+            leading: const Icon(Icons.account_circle),
+
+            title: _getAccountCode(),
           ),
         ),
       ]),

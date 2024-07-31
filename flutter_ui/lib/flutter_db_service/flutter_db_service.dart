@@ -7,18 +7,19 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // const String baseUrl = 'http://ec2-52-201-69-55.compute-1.amazonaws.com:443';
-const String baseUrl = 'dismissalapp.org';
-// const String baseUrl = 'localhost';
+// const String baseUrl = 'dismissalapp.org';
+const String baseUrl = 'localhost';
 // const String baseUrl = '10.44.0.48';
 String accountCode = 'dismissal_schema';
 
 void getAccountCode() async {
   accountCode = await SharedPreferences.getInstance()
       .then((prefs) => prefs.getString('accountCode') ?? 'dismissal_schema');
+  print(accountCode);
 }
 
 Future<List<Bus>> fetchBuses() async {
-  final response = await http.get(Uri.parse('https://$baseUrl/buses'));
+  final response = await http.get(Uri.parse('http://$baseUrl:80/$accountCode/buses'));
 
   if (response.statusCode == 200) {
     // If the server returns a 200 OK response,
@@ -40,7 +41,8 @@ Future<List<Bus>> fetchBuses() async {
 }
 
 Future<List<Teacher>> fetchTeachers() async {
-  final response = await http.get(Uri.parse('http://$baseUrl/teachers'));
+  final response =
+      await http.get(Uri.parse('http://$baseUrl/$accountCode/teachers'));
 
   if (response.statusCode == 200) {
     // If the server returns a 200 OK response,
@@ -59,7 +61,7 @@ Future<List<Teacher>> fetchTeachers() async {
   } else {
     // If the server returns an error response,
     // then throw an exception.
-    throw Exception('Failed to load teachers');
+    throw Exception('Failed to load teachers with response code: ${response.statusCode}');
   }
 }
 
@@ -108,10 +110,10 @@ Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
   }
 }
 
-Future<http.Response> sendListOfTeachers(
+Future<http.Response> UpdateBusesAndTeachers(
     BusesAndTeachers busesAndTeachers) async {
   final response = await http.put(
-      Uri.parse('http://$baseUrl/addListofTeachers'),
+      Uri.parse('http://$accountCode/$baseUrl/updateBusesAndTeachers'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },

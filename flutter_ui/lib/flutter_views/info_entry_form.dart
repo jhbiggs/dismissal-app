@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
 import 'package:flutter_ui/flutter_model/dismissal_model.dart';
 import 'package:flutter_ui/flutter_objects/bus.dart';
+import 'package:flutter_ui/flutter_objects/buses_and_teachers.dart';
 import 'package:flutter_ui/flutter_objects/teacher.dart';
 import 'package:flutter_ui/flutter_views/main_view.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -25,11 +26,12 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
   final _gradeFieldKey = GlobalKey<FormBuilderFieldState>();
   final _busNumberFieldKey = GlobalKey<FormBuilderFieldState>();
   // store the new entries in an array
-  final List<Teacher> _newTeachers = [];
-  final List<Bus> _newBuses = [];
+   List<Teacher> _newTeachers = [];
+   List<Bus> _newBuses = [];
   late int teacherIdCounter;
   late int busIdCounter;
   late SharedPreferences prefs;
+
 
   void _initiateNewSchema() async {
     // check if the new schema isn't already set for this app instance
@@ -37,14 +39,23 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
       // if it isn't, then set the new schema
       final response =
           await http.get(Uri.parse('http://$baseUrl:80/initiate-new-account'));
-      final decodedJson = jsonDecode(response.body);
       print(response.body);
-      final newAccountCode = decodedJson['accountCode'];
-      // prefs.setString('newAccountCode', newAccountCode);
-      print("new schema initiated: $newAccountCode");
 
-      // final newAccountCode = response.body
-      prefs.setBool('isNewSchema', false);
+      try {
+        final decodedJson = jsonDecode(response.body);
+        final newAccountCode = decodedJson['accountCode'];
+        prefs.setString('accountCode', newAccountCode);
+        print("new schema initiated: $newAccountCode");
+
+        print("storing buses and teachers... $_newBuses, $_newTeachers");
+        UpdateBusesAndTeachers(BusesAndTeachers(buses:_newBuses, teachers:_newTeachers));
+
+        // final newAccountCode = response.body
+        prefs.setBool('isNewSchema', false);
+      } catch (e) {
+        print('Error decoding JSON: $e');
+        return;
+      }
     } else {
       print('Schema already initiated');
     }
@@ -60,6 +71,8 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
   void initState() {
     super.initState();
     _getSharedPrefs();
+    _newBuses = DismissalModel.of(context).buses;
+    _newTeachers = DismissalModel.of(context).teachers;
   }
 
   @override
@@ -252,6 +265,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         // save the new teachers and buses to the database
                         DismissalModel.of(context)
                             .addNewData(_newTeachers, _newBuses);
+                        _initiateNewSchema();
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

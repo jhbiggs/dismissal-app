@@ -8,3 +8,8 @@ type BusListResponse struct {
 type TeacherListResponse struct {
 	Teachers []Teacher `json:"teachers"`
 }
+
+type BusesAndTeachers struct {
+	Buses []Bus `json:"buses"`
+	Teachers []Teacher `json:"teachers"`	
+}

@@ -23,7 +23,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
 
   Widget _buildFullscreenImage() {
     return Image.asset(
-      'assets/images/flutter_logo.png',
+      'assets/images/BusIcon.png',
       fit: BoxFit.cover,
       height: double.infinity,
       width: double.infinity,
@@ -34,7 +34,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   Widget _buildImage(String assetName, [double width = 350]) {
     try {
       return Image.asset(
-          'assets/images/flutter_logo.png'); //Image.asset('assets/$assetName', width: width);
+          'assets/images/BusIcon.png'); //Image.asset('assets/$assetName', width: width);
     } catch (e) {
       // print("An error was found, sorry pal.");
       return const Text("no");

@@ -26,14 +26,17 @@ type Client struct {
 
 	// egress is used to avoid concurrent write attempts
 	egress chan Event
+
+	schemaId string
 }
 
 // Initialize a new client
-func NewClient(conn *websocket.Conn, manager *Manager) *Client {
+func NewClient(conn *websocket.Conn, manager *Manager, schema string) *Client {
 	return &Client{
 		connection: conn,
 		manager: manager,
 		egress: make(chan Event),
+		schemaId: schema,
 	}
 }
 

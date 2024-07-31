@@ -11,6 +11,7 @@ import (
 
 func GetTeachers(ctx *gin.Context) {
 	fmt.Println("GetTeachers called")
+	schemaId := ctx.Param("account_code")
 
 	teacherList := []go_objects.Teacher{}
 	// query the database and return rows into the rows variable.
@@ -18,7 +19,7 @@ func GetTeachers(ctx *gin.Context) {
 	// Go doesn't care what the SQL column names are.
 	// It just takes the data from the column and puts them into the fields you specify.
 	dbInstance := GetDB()
-	rows, err := dbInstance.Query("SELECT * FROM dismissal_schema.teachers")
+	rows, err := dbInstance.Query("SELECT * FROM "+schemaId+".teachers")
 	// print each row in rows
 	if err != nil {
 		fmt.Println("Error querying the database: ", err)
@@ -49,9 +50,9 @@ func GetTeachers(ctx *gin.Context) {
 func ToggleTeacherArrivalStatus(ctx *gin.Context){
 	teacherID := ctx.Param("teacher_id")
 	fmt.Println("ToggleTeacherArrivalStatus called with teacherID: $1", teacherID)
-	// accountCode := ctx.Param("account_code")
+	schemaId := ctx.Param("account_code")
 
-	result, err := DB.Exec("UPDATE dismissal_schema.teachers SET arrived = NOT arrived WHERE teacherid = $1", teacherID)
+	result, err := DB.Exec("UPDATE "+schemaId+".teachers SET arrived = NOT arrived WHERE teacherid = $1", teacherID)
 	fmt.Println("Result is: ", result)
 	if err != nil {
 		fmt.Println("Error updating the database: ", err)
