@@ -5,8 +5,9 @@ import (
 	// "log"
 	"fmt"
 
-	// "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"unicode"
 )
 
 var (
@@ -44,4 +45,41 @@ func GetDB() *sql.DB {
 
 func CloseDB() {
 	DB.Close()
+}
+
+func CheckSchemas(ctx *gin.Context) {
+
+	fmt.Println("CheckSchemas called")
+	var schemaName string
+	schema_name := ctx.Param("account_code")
+	if len(schema_name) != 6 {
+		fmt.Println("Schema name is not required length")
+		return
+	}
+	if !isAlphabetic(schema_name) {
+		fmt.Println("Schema name should only contain alphabetic characters")
+		return
+	}
+	db := GetDB()
+	err := db.QueryRow("SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1", schema_name).Scan(&schemaName)
+	if err != nil {
+		fmt.Println("Error querying the database: ", err)
+		return
+	}
+	if err != nil {
+		fmt.Println("Error scanning the row: ", err)
+		return
+	} else {
+		fmt.Println("Schema name: ", schemaName)
+	}
+
+}
+
+func isAlphabetic(str string) bool {
+	for _, char := range str {
+		if !unicode.IsLetter(char) {
+			return false
+		}
+	}
+	return true
 }

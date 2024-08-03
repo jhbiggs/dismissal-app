@@ -10,16 +10,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 // const String baseUrl = 'dismissalapp.org';
 const String baseUrl = 'localhost';
 // const String baseUrl = '10.44.0.48';
-String accountCode = 'dismissal_schema';
+String accountCode = "";
 
-void getAccountCode() async {
-  accountCode = await SharedPreferences.getInstance()
-      .then((prefs) => prefs.getString('accountCode') ?? 'dismissal_schema');
-  print(accountCode);
+Future<void> getAccountCode() async {
+  await SharedPreferences.getInstance().then((prefs) {
+    accountCode = prefs.getString('accountCode') ?? 'dismissal_schema';
+    print("Account code is: $accountCode");
+  });
 }
 
 Future<List<Bus>> fetchBuses() async {
-  final response = await http.get(Uri.parse('http://$baseUrl:80/$accountCode/buses'));
+  await getAccountCode();
+  final response =
+      await http.get(Uri.parse('http://$baseUrl:80/$accountCode/buses'));
 
   if (response.statusCode == 200) {
     // If the server returns a 200 OK response,
@@ -41,6 +44,7 @@ Future<List<Bus>> fetchBuses() async {
 }
 
 Future<List<Teacher>> fetchTeachers() async {
+  await getAccountCode();
   final response =
       await http.get(Uri.parse('http://$baseUrl/$accountCode/teachers'));
 
@@ -61,14 +65,17 @@ Future<List<Teacher>> fetchTeachers() async {
   } else {
     // If the server returns an error response,
     // then throw an exception.
-    throw Exception('Failed to load teachers with response code: ${response.statusCode}');
+    throw Exception(
+        'Failed to load teachers with response code: ${response.statusCode}');
   }
 }
 
 Future<http.Response> updateBus(Bus bus) async {
+  await getAccountCode();
   // print("Bus ID in updateBus is: ${bus.id}");
   final response = await http.put(
-    Uri.parse('http://$baseUrl/buses/${bus.id}/toggleBusArrivalStatus'),
+    Uri.parse(
+        'http://$baseUrl/$accountCode/buses/${bus.id}/toggleBusArrivalStatus'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -87,8 +94,9 @@ Future<http.Response> updateBus(Bus bus) async {
 }
 
 Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
+  await getAccountCode();
   // print("Teacher ID in updateTeacher is: ${teacher.name}\n and id is: ${teacher.id}");
-  getAccountCode();
+  await getAccountCode();
   final response = await http.put(
     Uri.parse(
         'http://$baseUrl/$accountCode/teachers/${teacher.id}/toggleTeacherArrivalStatus'),
@@ -110,10 +118,11 @@ Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
   }
 }
 
-Future<http.Response> UpdateBusesAndTeachers(
+Future<http.Response> updateBusesAndTeachers(
     BusesAndTeachers busesAndTeachers) async {
+  await getAccountCode();
   final response = await http.put(
-      Uri.parse('http://$accountCode/$baseUrl/updateBusesAndTeachers'),
+      Uri.parse('http://$baseUrl/$accountCode/updateBusesAndTeachers'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },

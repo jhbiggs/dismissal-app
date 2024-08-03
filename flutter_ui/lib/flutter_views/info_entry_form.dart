@@ -25,13 +25,24 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
   final _busFormKey = GlobalKey<FormBuilderState>();
   final _gradeFieldKey = GlobalKey<FormBuilderFieldState>();
   final _busNumberFieldKey = GlobalKey<FormBuilderFieldState>();
+  final _gotCodeFieldKey = GlobalKey<FormBuilderFieldState>();
   // store the new entries in an array
-   List<Teacher> _newTeachers = [];
-   List<Bus> _newBuses = [];
+  List<Teacher> _newTeachers = [];
+  List<Bus> _newBuses = [];
   late int teacherIdCounter;
   late int busIdCounter;
   late SharedPreferences prefs;
 
+  Future<String?> Function(dynamic) _validateCode() {
+    
+    return (value) async {
+      var response = await http.get(Uri.parse('http://$baseUrl:80/$value/check-schemas'));
+      print("Validator response: ${response.body}");
+      if (value != accountCode) {
+        return 'Invalid code';
+      }
+    };
+  }
 
   void _initiateNewSchema() async {
     // check if the new schema isn't already set for this app instance
@@ -48,7 +59,8 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
         print("new schema initiated: $newAccountCode");
 
         print("storing buses and teachers... $_newBuses, $_newTeachers");
-        UpdateBusesAndTeachers(BusesAndTeachers(buses:_newBuses, teachers:_newTeachers));
+        updateBusesAndTeachers(
+            BusesAndTeachers(buses: _newBuses, teachers: _newTeachers));
 
         // final newAccountCode = response.body
         prefs.setBool('isNewSchema', false);
@@ -162,7 +174,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                             MaterialButton(
                               color: Theme.of(context).colorScheme.secondary,
                               onPressed: () {
-                                _initiateNewSchema();
+                                // _initiateNewSchema();
                                 debugPrint(_teacherFormKey.currentState?.value
                                     .toString());
                               },
@@ -244,7 +256,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                           MaterialButton(
                             color: Theme.of(context).colorScheme.secondary,
                             onPressed: () {
-                              _initiateNewSchema();
+                              // _initiateNewSchema();
                               debugPrint(
                                   _busFormKey.currentState?.value.toString());
                             },
@@ -257,42 +269,77 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
+                Row(
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // save the new teachers and buses to the database
-                        DismissalModel.of(context)
-                            .addNewData(_newTeachers, _newBuses);
-                        _initiateNewSchema();
+                    ButtonBar(
+                      alignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // save the new teachers and buses to the database
+                            DismissalModel.of(context)
+                                .addNewData(_newTeachers, _newBuses);
+                            // _initiateNewSchema();
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Teachers and Buses saved to the database'),
-                          ),
-                        );
-                        //launch the app
-                        Navigator.pushNamed(context, MainView.routeName);
-                      },
-                      child: const Text('Save All and Go'),
-                    )
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Teachers and Buses saved to the database'),
+                              ),
+                            );
+                            //launch the app
+                            Navigator.pushNamed(context, MainView.routeName);
+                          },
+                          child: const Text('Save All and Go'),
+                        )
+                      ],
+                    ),
+                    const Spacer(),
+                    ButtonBar(
+                      alignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            prefs.clear();
+                            print(
+                                'New schema initiated: ${prefs.getBool('newSchema')}');
+                          },
+                          child: const Text('Reset'),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        prefs.clear();
-                        print(
-                            'New schema initiated: ${prefs.getBool('newSchema')}');
-                      },
-                      child: const Text('Reset'),
-                    )
-                  ],
+                FormBuilderTextField(
+                  key: _gotCodeFieldKey,
+                  name: 'gotCode',
+                  decoration: const InputDecoration(labelText: 'Have a Code?'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.alphabetical(),
+                    // get all the schemas from the database and compare to
+                    // the code entered
+                    _validateCode(_gotCodeFieldKey.currentState?.value),
+                  ]),
                 ),
+                                        ElevatedButton(
+                          onPressed: () {
+                            // save the new teachers and buses to the database
+                            DismissalModel.of(context)
+                                .addNewData(_newTeachers, _newBuses);
+                            // _initiateNewSchema();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Teachers and Buses saved to the database'),
+                              ),
+                            );
+                            //launch the app
+                            Navigator.pushNamed(context, MainView.routeName);
+                          },
+                          child: const Text('Add Code and Go'),
+                        )
               ],
             )));
   }

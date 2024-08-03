@@ -26,7 +26,8 @@ class _BusListViewState extends State<BusListView> {
   //     Uri.parse('ws://dismissalapp.org:8080/notification-stream'));
   //  final _channel = WebSocketChannel.connect(
   //     Uri.parse("ws://localhost:8080/notification-stream"));
-  final _channel = WebSocketChannel.connect(Uri.parse("ws://$baseUrl:80/ws"));
+
+  final _channel = WebSocketChannel.connect(Uri.parse("ws://$baseUrl:80/$accountCode/ws"));
 
   @override
   void initState() {

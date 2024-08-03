@@ -130,8 +130,9 @@ func (m *Manager) routeEvent(event Event, c *Client) error {
 
 // Allows connections.  Gin Router calls it in API and server.go.
 func (m *Manager) ServeWS(ctx *gin.Context) {
-	
+	log.Println("ServeWS called with account code: ", ctx.Param("account_code"))
 	schemaId := ctx.Param("account_code")
+	log.Println("Schema ID: ", schemaId)
 	log.Println("New connection")
 	// Step one: upgrade HTTP request
 	conn, err := websocketUpgrader.Upgrade(ctx.Writer, ctx.Request, nil)
