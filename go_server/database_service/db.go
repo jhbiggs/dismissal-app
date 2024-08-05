@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"unicode"
+	"net/http"
 )
 
 var (
@@ -49,28 +50,39 @@ func CloseDB() {
 
 func CheckSchemas(ctx *gin.Context) {
 
+	// TODO: return the schema name if it exists
+
 	fmt.Println("CheckSchemas called")
 	var schemaName string
 	schema_name := ctx.Param("account_code")
 	if len(schema_name) != 6 {
 		fmt.Println("Schema name is not required length")
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Schema name is not required length"})
 		return
 	}
+
 	if !isAlphabetic(schema_name) {
 		fmt.Println("Schema name should only contain alphabetic characters")
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Schema name should only contain alphabetic characters"})
 		return
 	}
+
 	db := GetDB()
 	err := db.QueryRow("SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1", schema_name).Scan(&schemaName)
 	if err != nil {
 		fmt.Println("Error querying the database: ", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	if err != nil {
 		fmt.Println("Error scanning the row: ", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+
 	} else {
 		fmt.Println("Schema name: ", schemaName)
+		ctx.JSON(http.StatusOK, gin.H{"accountCode": schemaName})
 	}
 
 }

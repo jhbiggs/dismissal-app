@@ -31,17 +31,24 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
   List<Bus> _newBuses = [];
   late int teacherIdCounter;
   late int busIdCounter;
+  late String accountCode;
   late SharedPreferences prefs;
 
-  Future<String?> Function(dynamic) _validateCode() {
-    
-    return (value) async {
-      var response = await http.get(Uri.parse('http://$baseUrl:80/$value/check-schemas'));
-      print("Validator response: ${response.body}");
-      if (value != accountCode) {
-        return 'Invalid code';
-      }
-    };
+  Future<bool> _validateCode(String? testCode) async {
+    var response =
+        await http.get(Uri.parse('http://$baseUrl:80/$testCode/check-schemas'));
+
+    print("_validateCode response: ${response.body}");
+    final decodedResponse = jsonDecode(response.body);
+    if (decodedResponse['error'] != null) {
+      print("response error ");
+      return false;
+    } else {
+      print("valid response: ${decodedResponse["accountCode"]}");
+      prefs.setString("accountCode", decodedResponse["accountCode"]);
+
+      return true;
+    }
   }
 
   void _initiateNewSchema() async {
@@ -77,6 +84,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
     prefs = await SharedPreferences.getInstance();
     teacherIdCounter = prefs.getInt('teacherIdCounter') ?? 0;
     busIdCounter = prefs.getInt('busIdCounter') ?? 0;
+    accountCode = prefs.getString('accountCode') ?? 'no code set';
   }
 
   @override
@@ -174,7 +182,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                             MaterialButton(
                               color: Theme.of(context).colorScheme.secondary,
                               onPressed: () {
-                                // _initiateNewSchema();
+                                _initiateNewSchema();
                                 debugPrint(_teacherFormKey.currentState?.value
                                     .toString());
                               },
@@ -319,27 +327,36 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                     FormBuilderValidators.alphabetical(),
                     // get all the schemas from the database and compare to
                     // the code entered
-                    _validateCode(_gotCodeFieldKey.currentState?.value),
                   ]),
                 ),
-                                        ElevatedButton(
-                          onPressed: () {
-                            // save the new teachers and buses to the database
-                            DismissalModel.of(context)
-                                .addNewData(_newTeachers, _newBuses);
-                            // _initiateNewSchema();
+                ElevatedButton(
+                  onPressed: () async {
+                    // check if the code entered is correct
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Teachers and Buses saved to the database'),
-                              ),
-                            );
-                            //launch the app
-                            Navigator.pushNamed(context, MainView.routeName);
-                          },
-                          child: const Text('Add Code and Go'),
-                        )
+                    await _validateCode(_gotCodeFieldKey.currentState?.value)
+                        .then((isValidCode) {
+                      if (isValidCode) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Code is correct'),
+                          ),
+                        );
+                        prefs.setString('accountCode',
+                            _gotCodeFieldKey.currentState?.value);
+
+                        //launch the app
+                        Navigator.pushNamed(context, MainView.routeName);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Code is incorrect'),
+                          ),
+                        );
+                      }
+                    });
+                  },
+                  child: const Text('Add Code and Go'),
+                )
               ],
             )));
   }

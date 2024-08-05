@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
 import 'package:flutter_ui/flutter_settings/settings_controller.dart';
 import 'package:flutter_ui/flutter_views/bus_list_view.dart';
 import 'package:flutter_ui/flutter_views/teacher_list_view.dart';
@@ -26,6 +27,19 @@ class _MainViewState extends State<MainView> {
 
   void _resetArrivalFields() async {
     DismissalModel.of(context).resetArrivalFields();
+  }
+
+  void _resetLists() async {
+
+    // Reset the lists with any new account code
+    await fetchBuses();
+    await fetchTeachers();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _resetLists();
   }
 
   @override

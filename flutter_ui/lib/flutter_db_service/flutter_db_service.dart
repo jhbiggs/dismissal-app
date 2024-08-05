@@ -21,53 +21,59 @@ Future<void> getAccountCode() async {
 
 Future<List<Bus>> fetchBuses() async {
   await getAccountCode();
-  final response =
-      await http.get(Uri.parse('http://$baseUrl:80/$accountCode/buses'));
 
-  if (response.statusCode == 200) {
-    // If the server returns a 200 OK response,
-    // then parse the JSON.
-    Map<String, dynamic> list = json.decode(response.body);
-    if (list['buses'] != null) {
-      List<Bus> buses =
-          list['buses'].map<Bus>((bus) => Bus.fromJson(bus)).toList();
-      buses.sort((a, b) => a.busNumber.compareTo(b.busNumber));
-      return buses;
-    } else {
-      return [];
+  try {
+    final response =
+        await http.get(Uri.parse('http://$baseUrl:80/$accountCode/buses'));
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response,
+      // then parse the JSON.
+      Map<String, dynamic> list = json.decode(response.body);
+      if (list['buses'] != null) {
+        List<Bus> buses =
+            list['buses'].map<Bus>((bus) => Bus.fromJson(bus)).toList();
+        buses.sort((a, b) => a.busNumber.compareTo(b.busNumber));
+        return buses;
+      } else {
+        return [Bus(0, 'noNumber', 'noAnimal', false)];
+      }
     }
-  } else {
-    // If the server returns an error response,
-    // then throw an exception.
-    throw Exception('Failed to load buses');
+  } catch (e) {
+    print("Connection error in fetchBuses(): $e");
   }
+  return [Bus(0, 'noNumber', 'noAnimal', false)];
 }
 
 Future<List<Teacher>> fetchTeachers() async {
   await getAccountCode();
-  final response =
-      await http.get(Uri.parse('http://$baseUrl/$accountCode/teachers'));
+  try {
+    final response =
+        await http.get(Uri.parse('http://$baseUrl/$accountCode/teachers'));
 
-  if (response.statusCode == 200) {
-    // If the server returns a 200 OK response,
-    // then parse the JSON.
-    // print("fetch Teachers response is: "+response.body);
-    Map<String, dynamic> list = json.decode(response.body);
-    if (list['teachers'] != null) {
-      List<Teacher> teachers = list['teachers']
-          .map<Teacher>((teacher) => Teacher.fromJson(teacher))
-          .toList();
-      teachers.sort((a, b) => a.name.compareTo(b.name));
-      return teachers;
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response,
+      // then parse the JSON.
+      // print("fetch Teachers response is: "+response.body);
+      Map<String, dynamic> list = json.decode(response.body);
+      if (list['teachers'] != null) {
+        List<Teacher> teachers = list['teachers']
+            .map<Teacher>((teacher) => Teacher.fromJson(teacher))
+            .toList();
+        teachers.sort((a, b) => a.name.compareTo(b.name));
+        return teachers;
+      } else {
+        return [Teacher(0, "noTeacherButResponseOk", "noGrade", false)];
+      }
     } else {
-      return [];
+      // If the server returns an error response,
+      // then throw an exception.
+              return [Teacher(0, 'noTeacherButResponseOk', 'noGrade', false)];
+
     }
-  } else {
-    // If the server returns an error response,
-    // then throw an exception.
-    throw Exception(
-        'Failed to load teachers with response code: ${response.statusCode}');
+  } catch (e) {
+    print("Error in loading teachers: $e");
   }
+  return [Teacher(0, 'noTeacher', 'noGrade', false)];
 }
 
 Future<http.Response> updateBus(Bus bus) async {
