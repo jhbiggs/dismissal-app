@@ -16,6 +16,21 @@ class DismissalModel extends ChangeNotifier {
   List<Bus> get buses => _buses;
   List<Teacher> get teachers => _teachers;
 
+  void addTeacher(Teacher teacher) async {
+    print("Adding teacher in dismissal model: ${teacher.name}");
+    // Add teacher to the database
+    _teachers.add(teacher);
+    // Code to add teacher to the database goes here
+    await addTeacherToDb(teacher);
+    notifyListeners();
+  }
+
+  void addBus(Bus bus) async {
+    await addBusToDb(bus);
+    _buses.add(bus);
+    notifyListeners();
+  }
+
   void resetArrivalFields() async {
     print('Resetting arrival fields');
     for (var teacher in teachers) {
@@ -26,11 +41,10 @@ class DismissalModel extends ChangeNotifier {
 
     for (var bus in buses) {
       if (bus.arrived) {
-        await updateBus(bus);
+        await toggleBusArrivalStatus(bus);
       }
     }
-    // wait a second for the processes to complete
-    // await Future.delayed(const Duration(seconds: 1));
+
     // get the buses and teachers from the database
     _teachers = await fetchTeachers();
     _buses = await fetchBuses();

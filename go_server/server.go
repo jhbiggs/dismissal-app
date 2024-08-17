@@ -111,6 +111,7 @@ ginRouter.PUT("/:account_code/teachers/:teacher_id/toggleTeacherArrivalStatus", 
 ginRouter.GET("/initiate-new-account", func (ctx *gin.Context) { database_service.InitiateNewAccount(ctx) })
 ginRouter.PUT("/:account_code/updateBusesAndTeachers", func (ctx *gin.Context) { database_service.UpdateBusesAndTeachers(ctx) })
 ginRouter.GET("/:account_code/check-schemas", func (ctx *gin.Context) { database_service.CheckSchemas(ctx) })
+ginRouter.POST("/:account_code/addTeacher", func (ctx *gin.Context) { database_service.AddTeacher(ctx) })
 
 ginRouter.GET("/:account_code/ws", func (ctx *gin.Context) { manager.ServeWS(ctx) })	
 ginRouterPsql.GET("/psql-notification-stream", func (ctx *gin.Context) { webSocketHandler.PsqlNotificationStream(ctx, listener) })

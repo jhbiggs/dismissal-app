@@ -7,7 +7,7 @@ import (
 	"time"
 	"net/http"
 	"io/ioutil"
-	"log"
+	// "log"
 	"dismissal.com/m/v2/go_objects"
 
 )
@@ -57,13 +57,12 @@ func InitiateNewAccount(ctx *gin.Context)  {
 }
 
 func UpdateBusesAndTeachers(ctx *gin.Context) {
-	fmt.Println("receiveBusesAndTeachers called")
-	
-
+	fmt.Println("UpdateBusesAndTeachers called")
 
 	var newSet go_objects.BusesAndTeachers
-	if err := ctx.BindJSON(&newSet); err != nil {
-		log.Fatal(err)
+	if err := ctx.ShouldBindJSON(&newSet); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	fmt.Println("newSet: ", newSet)

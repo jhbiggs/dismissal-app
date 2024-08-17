@@ -67,8 +67,7 @@ Future<List<Teacher>> fetchTeachers() async {
     } else {
       // If the server returns an error response,
       // then throw an exception.
-              return [Teacher(0, 'noTeacherButResponseOk', 'noGrade', false)];
-
+      return [Teacher(0, 'noTeacherButResponseOk', 'noGrade', false)];
     }
   } catch (e) {
     print("Error in loading teachers: $e");
@@ -76,7 +75,7 @@ Future<List<Teacher>> fetchTeachers() async {
   return [Teacher(0, 'noTeacher', 'noGrade', false)];
 }
 
-Future<http.Response> updateBus(Bus bus) async {
+Future<http.Response> toggleBusArrivalStatus(Bus bus) async {
   await getAccountCode();
   // print("Bus ID in updateBus is: ${bus.id}");
   final response = await http.put(
@@ -100,7 +99,6 @@ Future<http.Response> updateBus(Bus bus) async {
 }
 
 Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
-  await getAccountCode();
   // print("Teacher ID in updateTeacher is: ${teacher.name}\n and id is: ${teacher.id}");
   await getAccountCode();
   final response = await http.put(
@@ -145,4 +143,27 @@ Future<http.Response> updateBusesAndTeachers(
     throw Exception(
         'Failed to add teacher list, error code: ${response.statusCode}');
   }
+}
+
+Future<http.Response> addBusToDb(Bus newBus) {
+  return http.post(
+    Uri.parse('http://$baseUrl/$accountCode/addBus'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{'bus': newBus}),
+  );
+}
+
+Future<http.Response> addTeacherToDb(Teacher newTeacher) {
+  print("Adding teacher to db with name ${newTeacher.name}");
+  // print("newTeacher object is: $newTeacher");
+  final jsonValue = newTeacher.toJson();
+  return http.post(
+    Uri.parse('http://$baseUrl/$accountCode/addTeacher'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(jsonValue),
+  );
 }

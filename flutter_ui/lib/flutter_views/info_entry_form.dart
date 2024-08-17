@@ -21,10 +21,7 @@ class InfoEntryForm extends StatefulWidget {
 }
 
 class _InfoEntryFormState extends State<InfoEntryForm> {
-  final _teacherFormKey = GlobalKey<FormBuilderState>();
-  final _busFormKey = GlobalKey<FormBuilderState>();
-  final _gradeFieldKey = GlobalKey<FormBuilderFieldState>();
-  final _busNumberFieldKey = GlobalKey<FormBuilderFieldState>();
+  
   final _gotCodeFieldKey = GlobalKey<FormBuilderFieldState>();
   // store the new entries in an array
   List<Teacher> _newTeachers = [];
@@ -33,6 +30,9 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
   late int busIdCounter;
   late String accountCode;
   late SharedPreferences prefs;
+  final _busFormKey = GlobalKey<FormBuilderState>();
+  final _teacherFormKey = GlobalKey<FormBuilderState>();
+
 
   Future<bool> _validateCode(String? testCode) async {
     var response =
@@ -66,8 +66,6 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
         print("new schema initiated: $newAccountCode");
 
         print("storing buses and teachers... $_newBuses, $_newTeachers");
-        updateBusesAndTeachers(
-            BusesAndTeachers(buses: _newBuses, teachers: _newTeachers));
 
         // final newAccountCode = response.body
         prefs.setBool('isNewSchema', false);
@@ -85,6 +83,14 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
     teacherIdCounter = prefs.getInt('teacherIdCounter') ?? 0;
     busIdCounter = prefs.getInt('busIdCounter') ?? 0;
     accountCode = prefs.getString('accountCode') ?? 'no code set';
+  }
+
+  void _updateBusesAndTeachers() async {
+    print('flutter update buses called  ');
+    final response = await updateBusesAndTeachers(
+        BusesAndTeachers(buses: _newBuses, teachers: _newTeachers));
+
+    print("Response body: ${response.body}");
   }
 
   @override
@@ -110,7 +116,9 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                     child: Column(
                       children: [
                         Card(
+                          
                           child: FormBuilderTextField(
+                            key: const ValueKey('teacherName'),
                             focusNode: FocusNode(),
                             name: 'teacherName',
                             decoration: const InputDecoration(
@@ -123,7 +131,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         const SizedBox(height: 10),
                         Card(
                           child: FormBuilderTextField(
-                            key: _gradeFieldKey,
+                            key: const ValueKey('grade'),
                             name: 'grade',
                             decoration:
                                 const InputDecoration(labelText: 'Grade'),
@@ -137,13 +145,12 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         Row(
                           children: [
                             MaterialButton(
+                              key: const ValueKey('submitTeacher'),
                               color: Theme.of(context).colorScheme.secondary,
                               onPressed: () {
-                                if (_teacherFormKey.currentState
-                                        ?.saveAndValidate() ??
+                                if (_teacherFormKey.currentState?.saveAndValidate() ??
                                     true) {
-                                  final teacherName = _teacherFormKey
-                                      .currentState?.value['teacherName'];
+                                  final teacherName = _teacherFormKey.currentState?.value['teacherName'];
                                   final grade = _teacherFormKey
                                       .currentState?.value['grade'];
                                   final teacherId = teacherIdCounter++;
@@ -151,7 +158,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                                       'teacherIdCounter', teacherIdCounter);
                                   final newTeacher = Teacher(
                                       teacherId, teacherName, grade, false);
-                                  _newTeachers.add(newTeacher);
+                                  DismissalModel.of(context).addTeacher(newTeacher);
                                   _teacherFormKey.currentState?.reset();
                                   FocusScope.of(context).requestFocus(
                                       _teacherFormKey
@@ -175,20 +182,9 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                                 debugPrint(_teacherFormKey.currentState?.value
                                     .toString());
                               },
-                              child: const Text('Save and Create Another',
+                              child: const Text('Submit Teacher',
                                   style: TextStyle(color: Colors.white)),
-                            ),
-                            const Spacer(),
-                            MaterialButton(
-                              color: Theme.of(context).colorScheme.secondary,
-                              onPressed: () {
-                                _initiateNewSchema();
-                                debugPrint(_teacherFormKey.currentState?.value
-                                    .toString());
-                              },
-                              child: const Text('Done with Teachers',
-                                  style: TextStyle(color: Colors.white)),
-                            )
+                            ),                           
                           ],
                         ),
                       ],
@@ -198,6 +194,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                   child: Column(
                     children: [
                       FormBuilderTextField(
+                        key: const Key('busNumber'),
                         focusNode: FocusNode(),
                         name: 'busNumber',
                         decoration:
@@ -208,7 +205,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                       ),
                       const SizedBox(height: 10),
                       FormBuilderTextField(
-                        key: _busNumberFieldKey,
+                        key: const Key('animal'),
                         name: 'animal',
                         decoration:
                             const InputDecoration(labelText: 'Bus Icon/Animal'),
@@ -285,9 +282,11 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         ElevatedButton(
                           onPressed: () {
                             // save the new teachers and buses to the database
-                            DismissalModel.of(context)
-                                .addNewData(_newTeachers, _newBuses);
-                            // _initiateNewSchema();
+                            // DismissalModel.of(context)
+                                // .addNewData(_newTeachers, _newBuses);
+                            _initiateNewSchema();
+
+                            _updateBusesAndTeachers();
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -295,6 +294,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                                     'Teachers and Buses saved to the database'),
                               ),
                             );
+
                             //launch the app
                             Navigator.pushNamed(context, MainView.routeName);
                           },
@@ -338,18 +338,20 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                       if (isValidCode) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Code is correct'),
+                            content: Text('Found a code!'),
                           ),
                         );
                         prefs.setString('accountCode',
                             _gotCodeFieldKey.currentState?.value);
+                        fetchBuses();
+                        fetchTeachers();
 
                         //launch the app
                         Navigator.pushNamed(context, MainView.routeName);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Code is incorrect'),
+                            content: Text('No code found'),
                           ),
                         );
                       }
