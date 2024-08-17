@@ -31,6 +31,30 @@ flutter_ui/.flutter-plugins-dependencies
 flutter_ui/.pub-cache/
 flutter_ui/.pub/
 flutter_ui/build/
+ flutter_ui/build/ios/Debug-iphonesimulator/.last_build_id
+        flutter_ui/build/ios/Debug-iphonesimulator/App.framework/App
+        flutter_ui/build/ios/Debug-iphonesimulator/App.framework/_CodeSignature/CodeResources
+        flutter_ui/build/ios/Debug-iphonesimulator/App.framework/flutter_assets/kernel_blob.bin
+        flutter_ui/build/ios/Debug-iphonesimulator/Flutter.framework/Flutter
+        flutter_ui/build/ios/Debug-iphonesimulator/Pods_Runner.framework/Pods_Runner
+        flutter_ui/build/ios/Debug-iphonesimulator/Pods_Runner.framework/_CodeSignature/CodeDirectory
+        flutter_ui/build/ios/Debug-iphonesimulator/Pods_Runner.framework/_CodeSignature/CodeRequirements-1
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/App.framework/App
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/App.framework/_CodeSignature/CodeResources
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/App.framework/flutter_assets/kernel_blob.bin
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/Flutter.framework/Flutter
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/flutter_keyboard_visibility.framework/flutter_keyboard_visibility
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Frameworks/shared_preferences_foundation.framework/shared_preferences_foundation
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/Runner
+        flutter_ui/build/ios/Debug-iphonesimulator/Runner.app/_CodeSignature/CodeResources
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/App
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/_CodeSignature/CodeResources
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/flutter_assets/kernel_blob.bin
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/Flutter.framework/Flutter
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/flutter_keyboard_visibility.framework/flutter_keyboard_visibility
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Frameworks/shared_preferences_foundation.framework/shared_preferences_foundation
+        flutter_ui/build/ios/iphonesimulator/Runner.app/Runner
+        flutter_ui/build/ios/iphonesimulator/Runner.app/_CodeSignature/CodeResources
 
 # Symbolication related
 flutter_ui/app.*.symbols
