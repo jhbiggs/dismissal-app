@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_ui/flutter_objects/bus.dart';
-import 'package:flutter_ui/flutter_objects/buses_and_teachers.dart';
 import 'package:flutter_ui/flutter_objects/teacher.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,8 +14,7 @@ String accountCode = "";
 
 Future<void> getAccountCode() async {
   await SharedPreferences.getInstance().then((prefs) {
-    accountCode = prefs.getString('accountCode') ?? 'dismissal_schema';
-    print("Account code is: $accountCode");
+    accountCode = prefs.getString('accountCode') ?? '';
   });
 }
 
@@ -122,30 +121,40 @@ Future<http.Response> toggleTeacherArrivalStatus(Teacher teacher) async {
   }
 }
 
-Future<http.Response> updateBusesAndTeachers(
-    BusesAndTeachers busesAndTeachers) async {
-  await getAccountCode();
-  final response = await http.put(
-      Uri.parse('http://$baseUrl/$accountCode/updateBusesAndTeachers'),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(
-          <String, BusesAndTeachers>{'buses-and-teachers': busesAndTeachers}));
+Future<void> initiateNewSchema() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  // check if the new schema isn't already set for this app instance
+  if (prefs.getBool('isNewSchema') ?? true) {
+    // if it isn't, then set the new schema
+    
+        await http.get(Uri.parse('http://$baseUrl:80/initiate-new-account'))
+        .then((value)
+          {
+    try {
+      final decodedJson = jsonDecode(value.body);
+      final newAccountCode = decodedJson['accountCode'];
+      prefs.setString('accountCode', newAccountCode);
+      print("new schema initiated: $newAccountCode");
 
-  if (response.statusCode == 200) {
-    // If the server returns a 200 OK response,
-    // then parse the JSON.
-    return response;
+      // final newAccountCode = response.body
+      prefs.setBool('isNewSchema', false);
+    } catch (e) {
+      print('Error decoding JSON: $e');
+      return;
+    }
+          }
+        );
+
   } else {
-    // If the server returns an error response,
-    // then throw an exception.
-    throw Exception(
-        'Failed to add teacher list, error code: ${response.statusCode}');
+    print('Schema already initiated');
   }
 }
 
-Future<http.Response> addBusToDb(Bus newBus) {
+Future<http.Response> addBusToDb(Bus newBus) async {
+  await getAccountCode();
+  if (accountCode == '') {
+    initiateNewSchema();
+  }
   return http.post(
     Uri.parse('http://$baseUrl/$accountCode/addBus'),
     headers: <String, String>{
@@ -155,15 +164,32 @@ Future<http.Response> addBusToDb(Bus newBus) {
   );
 }
 
-Future<http.Response> addTeacherToDb(Teacher newTeacher) {
-  print("Adding teacher to db with name ${newTeacher.name}");
-  // print("newTeacher object is: $newTeacher");
-  final jsonValue = newTeacher.toJson();
-  return http.post(
-    Uri.parse('http://$baseUrl/$accountCode/addTeacher'),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode(jsonValue),
-  );
+FutureOr<http.Response> addTeacherToDb(Teacher newTeacher) async {
+  await getAccountCode();
+  if (accountCode == '') {
+    return await initiateNewSchema().then((value) async {
+      print("Adding teacher to db with name ${newTeacher.name}");
+      await getAccountCode();
+      // print("newTeacher object is: $newTeacher");
+      final jsonValue = newTeacher.toJson();
+      return http.post(
+        Uri.parse('http://$baseUrl/$accountCode/addTeacher'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(jsonValue),
+      );
+    });
+  } else {
+    final jsonValue = newTeacher.toJson();
+    print("Adding teacher to db with name ${newTeacher.name}.  Already created account code.");
+
+    return http.post(
+      Uri.parse('http://$baseUrl/$accountCode/addTeacher'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(jsonValue),
+    );
+  }
 }

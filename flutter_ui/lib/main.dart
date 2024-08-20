@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_ui/flutter_objects/bus.dart';
 import 'package:flutter_ui/flutter_views/settings_view.dart';
 import 'package:flutter_ui/flutter_views/bus_list_view.dart';
 import 'package:flutter_ui/flutter_views/info_entry_form.dart';
@@ -15,9 +16,6 @@ import 'flutter_views/launch_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final buses = await fetchBuses();
-  final teachers = await fetchTeachers();
-
   // Set up the SettingsController, which will glue user settings to multiple
   // Flutter Widgets.
   final settingsController = SettingsController(SettingsService());
@@ -29,7 +27,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-          create: (context) => DismissalModel(buses, teachers)),
+          create: (context) => DismissalModel([], [])),
       Provider(create: (context) => settingsController),
     ],
     // run the app entitled "App" with the settings controller

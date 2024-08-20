@@ -96,3 +96,27 @@ func AddTeacher(ctx *gin.Context) {
 		Arrived: teacher.Arrived,
 	})
 }
+
+func AddTeacherList(ctx *gin.Context) {
+	schemaId := ctx.Param("account_code")
+	teacherList := []go_objects.Teacher{}
+	err := ctx.BindJSON(&teacherList)
+	fmt.Println("AddTeacherList called.  TeacherList: ", teacherList)
+
+	if err != nil {
+		fmt.Println("Error binding JSON: ", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	for _, teacher := range teacherList {
+		_, err = DB.Exec("INSERT INTO "+schemaId+".teachers (teachername, grade, arrived) VALUES ($1, $2, $3)", teacher.Name, teacher.Grade, teacher.Arrived)
+		if err != nil {
+			fmt.Println("Error inserting into the database: ", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+	ctx.JSON(http.StatusOK, go_objects.TeacherListResponse{
+		Teachers: teacherList,
+	})
+}

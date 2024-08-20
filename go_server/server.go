@@ -109,7 +109,7 @@ ginRouter.GET("/:account_code/teachers", func (ctx *gin.Context) { database_serv
 ginRouter.PUT("/:account_code/buses/:id/toggleBusArrivalStatus", func (ctx *gin.Context) { database_service.ToggleBusArrivalStatus(ctx) })
 ginRouter.PUT("/:account_code/teachers/:teacher_id/toggleTeacherArrivalStatus", func (ctx *gin.Context) { database_service.ToggleTeacherArrivalStatus(ctx) })
 ginRouter.GET("/initiate-new-account", func (ctx *gin.Context) { database_service.InitiateNewAccount(ctx) })
-ginRouter.PUT("/:account_code/updateBusesAndTeachers", func (ctx *gin.Context) { database_service.UpdateBusesAndTeachers(ctx) })
+ginRouter.POST("/:account_code/addTeacherList", func (ctx *gin.Context) { database_service.AddTeacherList(ctx) })
 ginRouter.GET("/:account_code/check-schemas", func (ctx *gin.Context) { database_service.CheckSchemas(ctx) })
 ginRouter.POST("/:account_code/addTeacher", func (ctx *gin.Context) { database_service.AddTeacher(ctx) })
 

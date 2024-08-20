@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ui/flutter_db_service/flutter_db_service.dart';
 import 'package:flutter_ui/flutter_model/dismissal_model.dart';
 import 'package:flutter_ui/flutter_objects/bus.dart';
-import 'package:flutter_ui/flutter_objects/buses_and_teachers.dart';
 import 'package:flutter_ui/flutter_objects/teacher.dart';
 import 'package:flutter_ui/flutter_views/main_view.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -21,76 +20,39 @@ class InfoEntryForm extends StatefulWidget {
 }
 
 class _InfoEntryFormState extends State<InfoEntryForm> {
-  
   final _gotCodeFieldKey = GlobalKey<FormBuilderFieldState>();
   // store the new entries in an array
   List<Teacher> _newTeachers = [];
   List<Bus> _newBuses = [];
-  late int teacherIdCounter;
   late int busIdCounter;
   late String accountCode;
   late SharedPreferences prefs;
   final _busFormKey = GlobalKey<FormBuilderState>();
   final _teacherFormKey = GlobalKey<FormBuilderState>();
 
-
   Future<bool> _validateCode(String? testCode) async {
     var response =
         await http.get(Uri.parse('http://$baseUrl:80/$testCode/check-schemas'));
 
-    print("_validateCode response: ${response.body}");
     final decodedResponse = jsonDecode(response.body);
     if (decodedResponse['error'] != null) {
-      print("response error ");
       return false;
     } else {
-      print("valid response: ${decodedResponse["accountCode"]}");
       prefs.setString("accountCode", decodedResponse["accountCode"]);
 
       return true;
     }
   }
 
-  void _initiateNewSchema() async {
-    // check if the new schema isn't already set for this app instance
-    if (prefs.getBool('isNewSchema') ?? true) {
-      // if it isn't, then set the new schema
-      final response =
-          await http.get(Uri.parse('http://$baseUrl:80/initiate-new-account'));
-      print(response.body);
-
-      try {
-        final decodedJson = jsonDecode(response.body);
-        final newAccountCode = decodedJson['accountCode'];
-        prefs.setString('accountCode', newAccountCode);
-        print("new schema initiated: $newAccountCode");
-
-        print("storing buses and teachers... $_newBuses, $_newTeachers");
-
-        // final newAccountCode = response.body
-        prefs.setBool('isNewSchema', false);
-      } catch (e) {
-        print('Error decoding JSON: $e');
-        return;
-      }
-    } else {
-      print('Schema already initiated');
-    }
-  }
-
   void _getSharedPrefs() async {
     prefs = await SharedPreferences.getInstance();
-    teacherIdCounter = prefs.getInt('teacherIdCounter') ?? 0;
     busIdCounter = prefs.getInt('busIdCounter') ?? 0;
     accountCode = prefs.getString('accountCode') ?? 'no code set';
   }
 
   void _updateBusesAndTeachers() async {
     print('flutter update buses called  ');
-    final response = await updateBusesAndTeachers(
-        BusesAndTeachers(buses: _newBuses, teachers: _newTeachers));
-
-    print("Response body: ${response.body}");
+    await DismissalModel.of(context).addNewData(_newTeachers, _newBuses);
   }
 
   @override
@@ -116,7 +78,6 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                     child: Column(
                       children: [
                         Card(
-                          
                           child: FormBuilderTextField(
                             key: const ValueKey('teacherName'),
                             focusNode: FocusNode(),
@@ -148,17 +109,16 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                               key: const ValueKey('submitTeacher'),
                               color: Theme.of(context).colorScheme.secondary,
                               onPressed: () {
-                                if (_teacherFormKey.currentState?.saveAndValidate() ??
+                                if (_teacherFormKey.currentState
+                                        ?.saveAndValidate() ??
                                     true) {
-                                  final teacherName = _teacherFormKey.currentState?.value['teacherName'];
+                                  final teacherName = _teacherFormKey
+                                      .currentState?.value['teacherName'];
                                   final grade = _teacherFormKey
                                       .currentState?.value['grade'];
-                                  final teacherId = teacherIdCounter++;
-                                  prefs.setInt(
-                                      'teacherIdCounter', teacherIdCounter);
-                                  final newTeacher = Teacher(
-                                      teacherId, teacherName, grade, false);
-                                  DismissalModel.of(context).addTeacher(newTeacher);
+                                  final newTeacher =
+                                      Teacher(0, teacherName, grade, false);
+                                  _newTeachers.add(newTeacher);
                                   _teacherFormKey.currentState?.reset();
                                   FocusScope.of(context).requestFocus(
                                       _teacherFormKey
@@ -184,7 +144,7 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                               },
                               child: const Text('Submit Teacher',
                                   style: TextStyle(color: Colors.white)),
-                            ),                           
+                            ),
                           ],
                         ),
                       ],
@@ -257,17 +217,6 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                             child: const Text('Save and Create Another',
                                 style: TextStyle(color: Colors.white)),
                           ),
-                          const Spacer(),
-                          MaterialButton(
-                            color: Theme.of(context).colorScheme.secondary,
-                            onPressed: () {
-                              // _initiateNewSchema();
-                              debugPrint(
-                                  _busFormKey.currentState?.value.toString());
-                            },
-                            child: const Text('Done with Buses',
-                                style: TextStyle(color: Colors.white)),
-                          )
                         ],
                       )
                     ],
@@ -282,12 +231,9 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         ElevatedButton(
                           onPressed: () {
                             // save the new teachers and buses to the database
-                            // DismissalModel.of(context)
-                                // .addNewData(_newTeachers, _newBuses);
-                            _initiateNewSchema();
 
+                            initiateNewSchema();
                             _updateBusesAndTeachers();
-
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
@@ -343,8 +289,8 @@ class _InfoEntryFormState extends State<InfoEntryForm> {
                         );
                         prefs.setString('accountCode',
                             _gotCodeFieldKey.currentState?.value);
-                        fetchBuses();
-                        fetchTeachers();
+                        prefs.setBool('isNewSchema', false);
+                        DismissalModel.of(context).refreshData();
 
                         //launch the app
                         Navigator.pushNamed(context, MainView.routeName);

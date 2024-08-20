@@ -31,9 +31,6 @@ class _MainViewState extends State<MainView> {
 
   void _resetLists() async {
 
-    // Reset the lists with any new account code
-    await fetchBuses();
-    await fetchTeachers();
   }
 
   @override

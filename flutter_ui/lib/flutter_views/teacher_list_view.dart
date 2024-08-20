@@ -20,17 +20,12 @@ class TeacherListView extends StatefulWidget {
 
 class _TeacherListViewState extends State<TeacherListView> {
   // create a blank list of teachers and a list of selected items
-  List<Teacher> items = [];
 
   // final _channel = WebSocketChannel.connect(
   //     Uri.parse('ws://dismissalapp.org:8080/notification-stream'));
-   final _channel = WebSocketChannel.connect(Uri.parse("ws://$baseUrl:80/$accountCode/ws"));
+  final _channel =
+      WebSocketChannel.connect(Uri.parse("ws://$baseUrl:80/$accountCode/ws"));
 
-  @override
-  void initState() {
-    super.initState();
-    items = DismissalModel.of(context).teachers;
-  }
 
   void _toggleTeacherArrival(Teacher teacher) {
     setState(() {
@@ -61,7 +56,7 @@ class _TeacherListViewState extends State<TeacherListView> {
           if (event.messageType == 'teacher-change') {
             final teacher = Teacher.fromJson(event.message);
             // Update the items with the new arrival status
-            items.firstWhere((element) => element.id == teacher.id).arrived =
+            DismissalModel.of(context).teachers.firstWhere((element) => element.id == teacher.id).arrived =
                 teacher.arrived;
           }
         }
